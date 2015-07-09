@@ -15,12 +15,10 @@ namespace Lab3_Conditionals
             double tax = incomeTaxes();
             if (tax != 0)
                 Console.WriteLine("Your tax is {0:C}", tax);
-            
-            //incomeTaxes();
 
-            //Time and classifications
-            Console.WriteLine("\n-----Time and Classifications-----");
-            timeClassifications();
+            ////Time and classifications
+            //Console.WriteLine("\n-----Time and Classifications-----");
+            //timeClassifications();
 
             
         }
@@ -40,79 +38,81 @@ namespace Lab3_Conditionals
             {
                 Console.WriteLine("****ERROR: Invalid input! Try again!*****");
                 return 0;
-                //return;
             }
 
-            //first tax bracket
-            if (income <= 20000)
+            //declaring variables needed for loop
+            double[] taxRates = { 0.05, 0.1, 0.2, 0.35 };
+            int[] upperLimits = { 0, 20000, 50000, 75000 };  //for each bracket
+            double taxableAmount = 0.0;
+            int length = upperLimits.Length;
+            bool stop = false;
+            
+            for (int i = 1; i < length; i++) //i = 1 so we skip upper limit of $0
             {
-                tax = income * 0.05;
-                Console.WriteLine("Your tax is {0:C}", tax);
-                return tax;
-            }
-            else
-                tax += 20000 * 0.05;
+                //if the income is higher than tax bracket, add maximum tax for bracket
+                if (income > upperLimits[i])
+                    taxableAmount = upperLimits[i] - upperLimits[i - 1];
 
-            while (true)
-            {
-                //-------------------------------------------------------------
-                //second tax bracket
-                if (income < 50000)
-                { //if higher, adds maximum tax for this bracket
-                    tax += (income - 20000) * 0.1;
-                    break;
-                }
-                else
-                    tax += (50000 - 20000) * 0.1;
-
-
-                //third tax bracket
-                if (income < 75000)
-                { //if higher, adds maximum tax for this bracket
-                    tax += (income - 50000) * 0.2;
-                    break;
+                else { //otherwise tax the difference between income and lower limit
+                    taxableAmount = income - upperLimits[i - 1];
+                    stop = true; //we've reached the bracket income falls in
                 }
 
-                else
-                {
-                    tax += (75000 - 50000) * 0.2;
+                tax += taxableAmount * taxRates[i - 1]; //rate is one element behind upper limit
 
-                    //fourth tax bracket
-                    tax += (income - 75000) * 0.35;
-
-                    break;
-                }
+                if (stop) //keep from running the else with negative taxableAmount
+                    break; 
             }
 
-            return tax;
-            //Console.WriteLine("Control: {0:C}",tax);
+            if (income > 75000)
+                tax += (income - 75000) * taxRates[length - 1];
+            
+            // return tax;
+             Console.WriteLine("Testing optimization: {0:C}", tax);
 
-
-            ////failed trying to assume maximum tax for first three brackets and then subtracting***
-            //tax = 9000; //assuming top of third bracket
-
-            ////adding to tax if in fourth bracket
-            //if (income > 75000)
-            //    tax += (income - 75000) * .35;
-
-            ////REST IS ASSUMING INCOME IS BELOW 75,000
-            ////subtracting if in third bracket (not top, 75,000)
-            //else
-            //      tax -= (75000 - () * .2;
-
-           
-
-            ////subtracting if in second bracket
-            //if (income <= 50000)
-            //    tax -= (50000 - income) * .1;
-
-            ////subtracting if in first bracket
+            ///*************sloppy first attempt, but it works so it's my control**************/
+            //tax = 0.0;
+            ////first tax bracket
             //if (income <= 20000)
-            //    tax = income * .05;
+            //{
+            //    tax = income * 0.05;
+            //    //Console.WriteLine("Your tax is {0:C}", tax);
+            //    Console.WriteLine("Control: {0:C}", tax);
+            //    return tax;
+            //}
+            //else
+            //    tax += 20000 * 0.05;
 
-            ////return tax;
-            //Console.WriteLine("Test: {0:C}", tax);
-            //return;
+            //while (true)
+            //{
+            //    //second tax bracket
+            //    if (income < 50000)
+            //    { //if higher, adds maximum tax for this bracket
+            //        tax += (income - 20000) * 0.1;
+            //        break;
+            //    }
+            //    else
+            //        tax += (50000 - 20000) * 0.1;
+
+            //    //third tax bracket
+            //    if (income < 75000)
+            //    { //if higher, adds maximum tax for this bracket
+            //        tax += (income - 50000) * 0.2;
+            //        break;
+            //    }
+
+            //    else
+            //    {
+            //        tax += (75000 - 50000) * 0.2;
+
+            //        //fourth tax bracket
+            //        tax += (income - 75000) * 0.35;
+
+            //        break;
+            //    }
+            //}
+            //Console.WriteLine("Control: {0:C}", tax); 
+            return tax; 
         }
 
         static void timeClassifications()
